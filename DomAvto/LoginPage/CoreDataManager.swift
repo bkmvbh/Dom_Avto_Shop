@@ -7,12 +7,13 @@
 
 import Foundation
 import CoreData
+import UIKit
 
-class CoreDataManager {
+class CoreDataManager: NSObject {
 
-    static let shared = CoreDataManager()
+    public static let shared = CoreDataManager()
     
-    private init() {}
+    private override init() {}
     
     var viewContext: NSManagedObjectContext {
         return persistentContainer.viewContext
@@ -41,10 +42,11 @@ class CoreDataManager {
             }
         }
     }
-    
+ // поменять так что бы принимать одного пользователя и запрашивать только того который нам нужен
     func obtainSavedData() -> [User] {
         let userFetchRequest = User.fetchRequest()
         let result = try? viewContext.fetch(userFetchRequest)
+        
         return result ?? []
     }
 }

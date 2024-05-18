@@ -33,6 +33,7 @@ class ViewController: UIViewController, UITextFieldDelegate, LoginViewDelegate {
             for user in dataManager.obtainSavedData() {
                 if user.name == loginView.nameTextField.text {
                     return
+                    // написать какой нибудь алерт что пользователь с таким именем уже существует
                 }
             }
             let user = User(context: dataManager.viewContext)
@@ -42,8 +43,31 @@ class ViewController: UIViewController, UITextFieldDelegate, LoginViewDelegate {
             dataSource.append(user)
             dataManager.saveContext()
             UserDefaults.standard.set(user.name, forKey: "currentUser")
-            let mainPageVC = MainPageViewController()
-            present(mainPageVC, animated: true, completion: nil)
+            UserDefaults.standard.set(user.email, forKey: "emailCurrentUser")
+            let mainTabBarController = MainTabBarController()
+            mainTabBarController.modalPresentationStyle = .fullScreen
+
+            self.present(mainTabBarController, animated: true, completion: nil)
+        }
+    }
+    
+    func didTapSignInButton() {
+//        let mainTabBarController = MainTabBarController()
+//        mainTabBarController.modalPresentationStyle = .fullScreen
+//
+//        self.present(mainTabBarController, animated: true, completion: nil)
+        for user in dataManager.obtainSavedData() {
+            if loginView.loginTextField.text == user.email && loginView.passwordTextField.text == user.password {
+                UserDefaults.standard.set(user.name, forKey: "currentUser")
+                UserDefaults.standard.set(user.email, forKey: "emailCurrentUser")
+                let mainTabBarController = MainTabBarController()
+                mainTabBarController.modalPresentationStyle = .fullScreen
+
+                self.present(mainTabBarController, animated: true, completion: nil)
+            }
+            else {
+                print("fatal error")
+            }
         }
     }
 }

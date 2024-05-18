@@ -9,7 +9,7 @@ import UIKit
 
 protocol LoginViewDelegate: AnyObject {
     func didTapSignUpButton()
-    
+    func didTapSignInButton()
 }
 
 class LoginView: UIView {
@@ -34,7 +34,6 @@ class LoginView: UIView {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        //imageView.layer.cornerRadius = CGFloat(imageWidthHeightAnchor/2)
         return imageView
     }()
     
@@ -61,16 +60,12 @@ class LoginView: UIView {
     }()
     
     lazy var signUpButton: UIButton = {
-        
-//        let action = UIAction { _ in
-//            self.buttonToChangeAction()
-//        }
+
         let button = UIButton()
-        button.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         button.setTitle("Войти", for: .normal)
         button.backgroundColor = UIColor(red: 16/255, green: 12/255, blue: 232/255, alpha: 1)
         button.translatesAutoresizingMaskIntoConstraints = false
-        
+        button.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -99,9 +94,9 @@ class LoginView: UIView {
         let password = UITextField()
         password.translatesAutoresizingMaskIntoConstraints = false
         password.borderStyle = .line
-        password.isSecureTextEntry = true
         password.borderStyle = .none
         password.placeholder = "Пароль"
+        password.textContentType = .password
         
         return password
     }()
@@ -172,58 +167,48 @@ class LoginView: UIView {
             signUpButton.heightAnchor.constraint(equalToConstant: CGFloat(buttonHeightAnchor)),
             
             logoImageView.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: CGFloat(loginAndPasswordConstraintsLeadingAndTrailing)),
-//            logoImageView.widthAnchor.constraint(equalToConstant: CGFloat(imageWidthHeightAnchor)),
-//            logoImageView.heightAnchor.constraint(equalToConstant: CGFloat(imageWidthHeightAnchor)),
-           // logoImageView.centerXAnchor.constraint(equalTo: centerXAnchor)
-            logoImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            logoImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            logoImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 1),
+            logoImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -1),
             logoImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
-    @objc func signUpButtonTapped() {
+    func signUpButtonTapped() {
          delegate?.didTapSignUpButton()
      }
     
-//    func buttonToChangeAction() {
-//        if passwordTextField.text == returnPasswordTextField.text &&
-//            nameTextField.text?.replacingOccurrences(of: " ", with: "") != "" &&
-//            loginTextField.text?.replacingOccurrences(of: " ", with: "") != "" &&
-//            passwordTextField.text?.replacingOccurrences(of: " ", with: "") != "" {
-//            for user in dataManager.obtainSavedData() {
-//                if user.name == nameTextField.text {
-//                    return
-//                }
-//            }
-//            let user = User(context: dataManager.viewContext)
-//            user.name = nameTextField.text
-//            user.email = loginTextField.text
-//            user.password = passwordTextField.text
-//            dataSource.append(user)
-//            dataManager.saveContext()
-//            UserDefaults.standard.set(user.name, forKey: "currentUser")
-//            
-//        }
-//    }
+    func signInButtonTapped() {
+         delegate?.didTapSignInButton()
+    
+     }
+    
+    @objc func actionButtonTapped() {
+        if loginAndRegistrationSegmentedControl.selectedSegmentIndex == 0 {
+            signInButtonTapped()
+        } else {
+            signUpButtonTapped()
+        }
+    }
     
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             signUpButton.setTitle("Войти", for: .normal)
+           
             nameTextField.isHidden = true
             returnPasswordTextField.isHidden = true
             loginTextField.placeholder = "Логин"
-            passwordTextField.placeholder = "Пароль"
             loginTextField.text = ""
+            passwordTextField.placeholder = "Пароль"
             passwordTextField.text = ""
         } else {
             signUpButton.setTitle("Зарегистрироваться", for: .normal)
             nameTextField.isHidden = false
-            returnPasswordTextField.isHidden = false
-            loginTextField.placeholder = "Введите Email"
-            passwordTextField.placeholder = "Введите пароль"
             nameTextField.text = ""
+            loginTextField.placeholder = "Введите Email"
             loginTextField.text = ""
+            passwordTextField.placeholder = "Введите пароль"
             passwordTextField.text = ""
+            returnPasswordTextField.isHidden = false
             returnPasswordTextField.text = ""
         }
     }
