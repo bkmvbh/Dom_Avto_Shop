@@ -19,6 +19,7 @@ extension User {
     @NSManaged public var password: String?
     @NSManaged public var name: String?
     @NSManaged public var email: String?
+    @NSManaged public var avatarImageView: Data?
 
 }
 

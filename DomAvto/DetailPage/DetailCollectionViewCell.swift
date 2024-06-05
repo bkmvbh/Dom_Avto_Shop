@@ -18,14 +18,14 @@ class DetailCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    private lazy var nameLabel: UILabel = {
+     lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Такаяма"
         return label
     }()
     
-    private lazy var priceLabel: UILabel = {
+     lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.text = "1400 ₽"
         label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -34,7 +34,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var pastPriceLabel: UILabel = {
+     lazy var pastPriceLabel: UILabel = {
         let label = UILabel()
         label.text = "2000 ₽"
         label.textColor = .darkGray
@@ -52,7 +52,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var descriptionGoodsLabel: UILabel = {
+     lazy var descriptionGoodsLabel: UILabel = {
         let label = UILabel()
         label.text = "масло жаропрочное там тут"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -92,15 +92,15 @@ class DetailCollectionViewCell: UICollectionViewCell {
             cellPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellPhotoImageView.bottomAnchor.constraint(equalTo: priceLabel.topAnchor, constant: -4),
             cellPhotoImageView.heightAnchor.constraint(equalToConstant: 250),
-//            cellPhotoImageView.heightAnchor.constraint(equalTo: cellPhotoImageView.widthAnchor),
-//            nameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             priceLabel.bottomAnchor.constraint(equalTo: nameLabel.topAnchor, constant: -4),
             pastPriceLabel.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 8),
             pastPriceLabel.bottomAnchor.constraint(equalTo: nameLabel.topAnchor, constant: -4),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             nameLabel.bottomAnchor.constraint(equalTo: descriptionGoodsLabel.topAnchor, constant: -4),
             descriptionGoodsLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            descriptionGoodsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             descriptionGoodsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             reviewButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             reviewButton.topAnchor.constraint(equalTo: descriptionGoodsLabel.bottomAnchor, constant: 4),

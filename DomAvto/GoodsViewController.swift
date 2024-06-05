@@ -5,11 +5,12 @@
 //  Created by Ильмир Шарафутдинов on 28.04.2024.
 //
 
+
 import UIKit
 
 class GoodsViewController: UIViewController {
     
-    var imageName = ""
+    var goodId = ""
     
     lazy var cellPhotoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -19,16 +20,15 @@ class GoodsViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var priceLabel: UILabel = {
+    lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.text = "1400 ₽"
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
-    private lazy var discriptionLabel: UILabel = {
+    lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Моторное масло Mobil Super 3000 5W-40, 4 л"
         label.font = UIFont.boldSystemFont(ofSize: 25)
@@ -37,7 +37,15 @@ class GoodsViewController: UIViewController {
         return label
     }()
     
-    private lazy var pastPriceLabel: UILabel = {
+    lazy var discriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    lazy var pastPriceLabel: UILabel = {
         let label = UILabel()
         label.text = "2000 ₽"
         label.textColor = .darkGray
@@ -47,22 +55,20 @@ class GoodsViewController: UIViewController {
             NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue
         ]
         
-        label.attributedText = NSAttributedString(string: label.text ?? "",
-                                                 attributes: attributes)
-        
+        label.attributedText = NSAttributedString(string: label.text ?? "", attributes: attributes)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
     
-    private lazy var reviewButton: UIButton = {
+    lazy var reviewButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "review"), for: .normal)
         return button
     }()
     
-    private lazy var reviewCountLabel: UILabel = {
+    lazy var reviewCountLabel: UILabel = {
         let label = UILabel()
         label.text = "1356"
         label.font = UIFont.boldSystemFont(ofSize: 16)
@@ -71,12 +77,12 @@ class GoodsViewController: UIViewController {
         return label
     }()
     
-    private lazy var toOrderGoodsButton: UIButton = {
+    lazy var toOrderGoodsButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor(red: 16/255, green: 12/255, blue: 232/255, alpha: 1)
         button.layer.cornerRadius = 18
-        button.setTitle("В корзину", for: .normal)
+        button.addTarget(self, action: #selector(addToCart), for: .touchUpInside)
         return button
     }()
     
@@ -87,38 +93,93 @@ class GoodsViewController: UIViewController {
     }
     
     func setupLayout() {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(cellPhotoImageView)
-        view.addSubview(priceLabel)
-        view.addSubview(discriptionLabel)
-        view.addSubview(pastPriceLabel)
-        view.addSubview(reviewButton)
-        view.addSubview(reviewCountLabel)
-        view.addSubview(toOrderGoodsButton)
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(cellPhotoImageView)
+        contentView.addSubview(priceLabel)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(pastPriceLabel)
+        contentView.addSubview(reviewButton)
+        contentView.addSubview(reviewCountLabel)
+        contentView.addSubview(toOrderGoodsButton)
+        contentView.addSubview(discriptionLabel)
         
         NSLayoutConstraint.activate([
-            cellPhotoImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            cellPhotoImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            cellPhotoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: CGFloat(100)),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            cellPhotoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            cellPhotoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            cellPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             cellPhotoImageView.heightAnchor.constraint(equalToConstant: 300),
-            discriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            discriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            discriptionLabel.topAnchor.constraint(equalTo: cellPhotoImageView.bottomAnchor, constant: 10),
+            
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            nameLabel.topAnchor.constraint(equalTo: cellPhotoImageView.bottomAnchor, constant: 10),
+            
             priceLabel.bottomAnchor.constraint(equalTo: pastPriceLabel.topAnchor),
-            priceLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            pastPriceLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            pastPriceLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            reviewButton.topAnchor.constraint(equalTo: discriptionLabel.bottomAnchor, constant: 10),
-            reviewButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            
+            pastPriceLabel.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            pastPriceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            
+            reviewButton.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
+            reviewButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             reviewButton.heightAnchor.constraint(equalToConstant: 25),
             reviewButton.widthAnchor.constraint(equalToConstant: 130),
+            
             reviewCountLabel.leadingAnchor.constraint(equalTo: reviewButton.trailingAnchor, constant: 5),
-            reviewCountLabel.topAnchor.constraint(equalTo: discriptionLabel.bottomAnchor, constant: 15),
-            toOrderGoodsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            toOrderGoodsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -17),
+            reviewCountLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 15),
+            
+            toOrderGoodsButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            toOrderGoodsButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -17),
             toOrderGoodsButton.widthAnchor.constraint(equalToConstant: 116),
-            toOrderGoodsButton.heightAnchor.constraint(equalToConstant: 36)
+            toOrderGoodsButton.heightAnchor.constraint(equalToConstant: 36),
+            
+            discriptionLabel.topAnchor.constraint(equalTo: reviewCountLabel.bottomAnchor, constant: 10),
+            discriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            discriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            discriptionLabel.bottomAnchor.constraint(equalTo: priceLabel.topAnchor, constant: -10)
         ])
-        cellPhotoImageView.image = UIImage(named: imageName)
+        
+        if DataBaseManager.shared.shoppingCart.contains(goodId) == true {
+            toOrderGoodsButton.backgroundColor = .gray
+            toOrderGoodsButton.setTitle("Удалить", for: .selected)
+            toOrderGoodsButton.isSelected = true
+        } else {
+            toOrderGoodsButton.backgroundColor = UIColor(red: 16/255, green: 12/255, blue: 232/255, alpha: 1)
+            toOrderGoodsButton.setTitle("В корзину", for: .normal)
+            toOrderGoodsButton.isSelected = false
+        }
+    }
+    
+    @objc
+    func addToCart() {
+        toOrderGoodsButton.isSelected.toggle()
+        if toOrderGoodsButton.isSelected {
+            DataBaseManager.shared.addGoodToCart(by: goodId)
+            toOrderGoodsButton.backgroundColor = .gray
+            toOrderGoodsButton.setTitle("Удалить", for: .selected)
+        } else {
+            DataBaseManager.shared.removeGood(at: goodId)
+            toOrderGoodsButton.backgroundColor = UIColor(red: 16/255, green: 12/255, blue: 232/255, alpha: 1)
+            toOrderGoodsButton.setTitle("В корзину", for: .normal)
+        }
     }
 }
+

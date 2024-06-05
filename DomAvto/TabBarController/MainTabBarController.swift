@@ -17,18 +17,21 @@ class MainTabBarController: UITabBarController {
         
         let mainPageViewController = MainPageViewController()
         let secondViewController = SecondViewController()
-        let thirdViewController = ThirdViewController()
+        let thirdViewController = SearchViewController()
+        let cartViewController = CartViewController()
         
         let boldConfig = UIImage.SymbolConfiguration(weight: .medium)
-        let convImage = UIImage(systemName: "bubble.left.and.bubble.right", withConfiguration: boldConfig)!
+        let convImage = UIImage(systemName: "magnifyingglass", withConfiguration: boldConfig)!
         let peopleImage = UIImage(systemName: "person.2", withConfiguration: boldConfig)!
-        let carImage = UIImage(systemName: "car", withConfiguration: boldConfig)!
+        let cartImage = UIImage(systemName: "cart", withConfiguration: boldConfig)!
+        let carImage = UIImage(systemName: "house", withConfiguration: boldConfig)!
         
         viewControllers = [
-            generateNavigationController(rootViewController: mainPageViewController, title: "Advanced", image: carImage),
-            generateNavigationController(rootViewController: secondViewController, title: "Compositional", image: peopleImage),
-           generateNavigationController(rootViewController: thirdViewController, title: "Flow", image: convImage)
-           
+            generateNavigationController(rootViewController: mainPageViewController, title: "", image: carImage),
+            generateNavigationController(rootViewController: cartViewController, title: "", image: cartImage),
+            generateNavigationController(rootViewController: thirdViewController, title: "", image: convImage),
+            
+            generateNavigationController(rootViewController: secondViewController, title: "", image: peopleImage),
             
             
         ]

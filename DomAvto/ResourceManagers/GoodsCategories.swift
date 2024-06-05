@@ -10,4 +10,5 @@ import Foundation
 struct GoodsCategories {
     let image: String
     let name: String
+    let type: TypeEnum
 }

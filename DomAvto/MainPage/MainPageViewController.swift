@@ -11,6 +11,7 @@ import UIKit
 class MainPageViewController: UIViewController {
     let categories = GoodsCategoriesManager().data
     let collectionView = MyCollectionView()
+    let pushNotificationManager = PushNotificationManager()
     
     override func loadView() {
         view = collectionView
@@ -26,11 +27,24 @@ class MainPageViewController: UIViewController {
         navigationController?.navigationBar.topItem?.title = "Категории"
         let addItem = UIBarButtonItem(title: nil, image: UIImage(named: "notification"), target: self, action: #selector(addTapped))
         navigationItem.rightBarButtonItem = addItem
+        
+        Task {
+            let _ = try? await pushNotificationManager.registerForNotifications()
+            pushNotificationManager.scheduleRepeatingNotification(
+                title: "Reminder",
+                body: "This is your 5-hour reminder.",
+                timeInterval: 5 * 60 * 60
+            )
+        }
     }
     
     @objc
     func addTapped() {
-        
+        pushNotificationManager.scheduleNotification(
+                   title: "Manual Notification",
+                   body: "This is a notification triggered manually.",
+                   timeInterval: 1
+               )
     }
 }
 
@@ -56,34 +70,8 @@ extension MainPageViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailController = DetailViewController()
-        detailController.imageName = categories[indexPath.row].image
+        detailController.selectedType = categories[indexPath.row].type
         navigationController?.pushViewController(detailController, animated: true)
     }
 }
 
-//class MainPageViewController: UIViewController {
-//
-//    lazy var myLabel: UILabel = {
-//        let label = UILabel()
-//        label.textColor = .darkGray
-//        label.numberOfLines = 1
-//        label.font = UIFont.boldSystemFont(ofSize: 30)
-//        label.textAlignment = .center
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }()
-//
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        view.backgroundColor = .red
-//        myLabel.text = UserDefaults.standard.string(forKey: "currentUser")
-//        view.addSubview(myLabel)
-//        NSLayoutConstraint.activate([
-//            myLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            myLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-//
-//            ])
-//    }
-//
-//}

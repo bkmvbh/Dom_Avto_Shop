@@ -42,7 +42,7 @@ class CoreDataManager: NSObject {
             }
         }
     }
- // поменять так что бы принимать одного пользователя и запрашивать только того который нам нужен
+
     func obtainSavedData() -> [User] {
         let userFetchRequest = User.fetchRequest()
         let result = try? viewContext.fetch(userFetchRequest)

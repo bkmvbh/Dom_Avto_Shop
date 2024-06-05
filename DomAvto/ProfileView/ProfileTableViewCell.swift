@@ -8,6 +8,9 @@ import UIKit
 
 class ProfileTableViewCell: UITableViewCell {
     
+    private var configure: ((UIImagePickerController) -> ())?
+    lazy var dataManager = CoreDataManager.shared
+    
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +29,7 @@ class ProfileTableViewCell: UITableViewCell {
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 35
         return imageView
@@ -36,16 +39,22 @@ class ProfileTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupLayout()
+        addPhotoInProfile()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureCell(name: String, image: String, email: String) {
+    func configureCell(name: String, image: String, email: String, avatarImage: Data?, configure: ((UIImagePickerController) -> ())? = nil) {
         nameLabel.text = name
-        avatarImageView.image = UIImage(named: "black")
         emailLabel.text = email
+        if let avatarImage = avatarImage {
+            avatarImageView.image = UIImage(data: avatarImage)
+        } else {
+            avatarImageView.image = UIImage(named: "black")
+        }
+        self.configure = configure
     }
         
     func setupLayout() {
@@ -68,11 +77,50 @@ class ProfileTableViewCell: UITableViewCell {
     }
     
     
+    func addPhotoInProfile() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(addNewPostImageAction))
+
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc
+    func addNewPostImageAction() {
+        let vc = UIImagePickerController ()
+        vc.sourceType = .photoLibrary
+        vc.delegate = self
+        vc.allowsEditing = true
+        configure?(vc)
+    }
+    
 }
 
 
 extension UITableViewCell {
     static var reuseIdentifier: String {
         return String(describing: self)
+    }
+}
+
+extension ProfileTableViewCell: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let image = info[UIImagePickerController.InfoKey (rawValue: "UIImagePickerControllerEditedImage")] as? UIImage {
+            avatarImageView.image = image
+            
+            let users = dataManager.obtainSavedData()
+            for user in users {
+                if user.name == UserDefaults.standard.string(forKey: "currentUser") {
+                    user.avatarImageView = image.pngData()
+                }
+            }
+            dataManager.saveContext()
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
     }
 }
